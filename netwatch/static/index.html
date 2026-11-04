@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>netwatch</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="page">
+    <nav class="nav">
+      <a class="logo" href="/" aria-label="netwatch">n</a>
+      <details class="export">
+        <summary class="btn">Export</summary>
+        <div class="menu">
+          <a id="csv-checks" href="/export/checks.csv">Checks · this week</a>
+          <a id="csv-outages" href="/export/outages.csv">Outages · this week</a>
+          <a id="csv-speed" href="/export/speedtests.csv">Speed tests · this week</a>
+          <a href="/export/checks.csv">All checks</a>
+          <a href="/export/outages.csv">All outages</a>
+        </div>
+      </details>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-icon" id="hero-icon"></div>
+      <h1 id="hero-title">Checking…</h1>
+      <p class="hero-sub" id="hero-sub">&nbsp;</p>
+    </header>
+
+    <section class="card" id="overview"></section>
+
+    <section class="card">
+      <div class="weeknav">
+        <button class="btn icon" id="prev" aria-label="Previous week">
+          <svg viewBox="0 0 16 16" width="14" height="14"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span class="card-title" id="week-label">This week</span>
+        <button class="btn icon" id="next" aria-label="Next week">
+          <svg viewBox="0 0 16 16" width="14" height="14"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn small" id="today">This week</button>
+      </div>
+      <div id="week"></div>
+      <div class="axis-row" aria-hidden="true"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+    </section>
+
+    <details class="card fold" id="speed">
+      <summary><span class="card-title">Speed</span><span class="fold-sum" id="speed-sum"></span><i class="chev"></i></summary>
+      <div class="fold-body">
+        <div class="chart-legend">
+          <span><i class="swatch down"></i>Download</span>
+          <span><i class="swatch up"></i>Upload</span>
+          <span><i class="swatch fail"></i>Failed</span>
+        </div>
+        <div id="speed-chart" class="chart"></div>
+      </div>
+    </details>
+
+    <details class="card fold" id="incidents">
+      <summary><span class="card-title">Outages</span><span class="fold-sum" id="incident-sum"></span><i class="chev"></i></summary>
+      <div class="fold-body" id="incident-list"></div>
+    </details>
+
+    <footer class="foot" id="foot"></footer>
+  </div>
+
+  <div id="tip" class="tip" role="tooltip" hidden></div>
+  <script src="/app.js"></script>
+</body>
+</html>
