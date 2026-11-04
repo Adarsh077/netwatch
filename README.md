@@ -35,8 +35,10 @@ git clone <this repo> netwatch && cd netwatch    # or copy the folder over
 docker compose up -d --build
 ```
 
-Open `http://<mini-pc-ip>:8080`. Data lives in `./data/netwatch.db` (SQLite)
-and survives rebuilds. The container restarts on boot (`restart: unless-stopped`),
+The container listens on port 8080 on the Docker network. Route a domain to it
+with a reverse proxy (Traefik, Dokploy), or add `ports: ["8080:8080"]` to the
+compose file and open `http://<mini-pc-ip>:8080`. Data lives in the
+`netwatch-data` volume (SQLite) and survives rebuilds. The container restarts on boot (`restart: unless-stopped`),
 so also make sure Docker itself starts on boot: `sudo systemctl enable docker`.
 
 Put the mini-PC on a **wired** connection to the router if you can. Then a
@@ -53,7 +55,7 @@ Set these in `docker-compose.yml`:
 | `CHECK_INTERVAL` | `30` | seconds between checks |
 | `PING_TARGETS` | `1.1.1.1,8.8.8.8` | internet hosts to ping |
 | `HTTP_PROBE_URL` | `http://connectivitycheck.gstatic.com/generate_204` | must return 204/200 |
-| `GATEWAY` | auto | router IP; auto-detected from the routing table |
+| `GATEWAY` | `192.168.0.1` | router IP; set it to your router |
 | `SPEEDTEST_ENABLED` | `1` | set `0` to turn speed tests off |
 | `SPEEDTEST_INTERVAL` | `3600` | seconds between speed tests |
 | `SPEEDTEST_DURATION` | `8` | seconds per direction |
@@ -64,9 +66,8 @@ data. On a 50 Mbps line that's ~100 MB per test, or ~2.4 GB a day at one
 test per hour. On a fast or capped plan, lower `SPEEDTEST_DURATION` or
 raise `SPEEDTEST_INTERVAL`.
 
-The container uses `network_mode: host` so it sees your real router as its
-gateway. Under Docker's default bridge networking it would only see the
-bridge.
+The container uses bridge networking, so it cannot auto-detect your router:
+it only sees Docker's bridge gateway. Set `GATEWAY` to your router's IP.
 
 ## Export
 
