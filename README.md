@@ -60,6 +60,8 @@ Set these in `docker-compose.yml`:
 | `SPEEDTEST_INTERVAL` | `3600` | seconds between speed tests |
 | `SPEEDTEST_DURATION` | `8` | seconds per direction |
 | `SPEEDTEST_STREAMS` | `4` | parallel connections |
+| `SPEEDTEST_PAUSE` | `09:00-13:00` | daily window with no speed tests; empty = no pause |
+| `SPEEDTEST_PAUSE_TZ` | `Asia/Kolkata` | time zone for `SPEEDTEST_PAUSE` |
 
 **Data usage:** each speed test moves about `speed × duration × 2` worth of
 data. On a 50 Mbps line that's ~100 MB per test, or ~2.4 GB a day at one

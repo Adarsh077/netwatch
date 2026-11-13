@@ -19,6 +19,8 @@ services:
       SPEEDTEST_INTERVAL: 3600
       SPEEDTEST_DURATION: 8      # seconds per direction
       SPEEDTEST_STREAMS: 4
+      SPEEDTEST_PAUSE: "09:00-13:00"   # no speed tests in this window, every day
+      SPEEDTEST_PAUSE_TZ: Asia/Kolkata
     logging:
       driver: json-file
       options:

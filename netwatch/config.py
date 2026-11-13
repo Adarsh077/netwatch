@@ -40,3 +40,6 @@ class Config:
     speedtest_duration: int = field(default_factory=lambda: _env_int("SPEEDTEST_DURATION", 8))
     speedtest_streams: int = field(default_factory=lambda: _env_int("SPEEDTEST_STREAMS", 4))
     speedtest_host: str = field(default_factory=lambda: _env("SPEEDTEST_HOST", "speed.cloudflare.com"))
+    # Daily window with no speed tests, "HH:MM-HH:MM" in speedtest_pause_tz. Empty = never pause.
+    speedtest_pause: str = field(default_factory=lambda: _env("SPEEDTEST_PAUSE", "09:00-13:00"))
+    speedtest_pause_tz: str = field(default_factory=lambda: _env("SPEEDTEST_PAUSE_TZ", "Asia/Kolkata"))

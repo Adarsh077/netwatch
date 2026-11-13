@@ -9,6 +9,8 @@ import logging
 import statistics
 import threading
 import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 log = logging.getLogger("netwatch.speedtest")
 
@@ -146,20 +148,43 @@ def record_speedtest(db, cfg, ts=None):
         RUNNING.clear()
 
 
+def _minutes(hhmm):
+    h, m = hhmm.strip().split(":")
+    return int(h) * 60 + int(m)
+
+
+def in_pause(cfg, ts):
+    """True if ts falls in the daily SPEEDTEST_PAUSE window (end exclusive)."""
+    if not cfg.speedtest_pause.strip():
+        return False
+    start, end = (_minutes(p) for p in cfg.speedtest_pause.split("-"))
+    t = datetime.fromtimestamp(ts, ZoneInfo(cfg.speedtest_pause_tz))
+    now = t.hour * 60 + t.minute
+    if start <= end:
+        return start <= now < end
+    return now >= start or now < end  # window crosses midnight
+
+
 def speedtest_loop(db, cfg, stop):
     interval, offset = cfg.speedtest_interval, cfg.speedtest_offset
     log.info("speed tests every %ss, %ss past the boundary", interval, offset)
+    if cfg.speedtest_pause.strip():
+        log.info("speed tests paused daily %s (%s)", cfg.speedtest_pause, cfg.speedtest_pause_tz)
 
     # On a fresh start, don't wait up to an hour for the first result.
     last = db.latest_speedtest()
     if last is None or time.time() - last["ts"] > interval:
         if stop.wait(45):  # let a couple of connectivity checks land first
             return
-        record_speedtest(db, cfg)
+        if not in_pause(cfg, time.time()):
+            record_speedtest(db, cfg)
 
     while not stop.is_set():
         now = time.time()
         next_t = (now - offset) // interval * interval + interval + offset
         if stop.wait(next_t - now):
             break
+        if in_pause(cfg, next_t):
+            log.info("speed test skipped: pause window")
+            continue
         record_speedtest(db, cfg, next_t)
